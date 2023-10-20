@@ -2,6 +2,7 @@
 #define PARSER_EXCEPTION_HPP_INCLUDED
 
 #include <string>
+#include <fstream>
 
 class PARSER_EXCEPTION
 {
