@@ -16,6 +16,7 @@
 #include "relexprast.hpp"
 #include "unaryexprast.hpp"
 
+#ifdef LLVM
 #include <llvm-5.0/llvm/IR/LLVMContext.h>
 #include <llvm-5.0/llvm/IR/IRBuilder.h>
 #include <llvm-5.0/llvm/IR/Constant.h>
@@ -30,6 +31,9 @@
 #include <llvm-5.0/llvm/Support/TargetSelect.h>
 #include <llvm-5.0/llvm/Target/TargetMachine.h>
 #include <llvm-5.0/llvm/Target/TargetOptions.h>
+#else
+#include "llvm.hpp"
+#endif // LLVM
 
 class CODEGEN
 {

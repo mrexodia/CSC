@@ -300,14 +300,14 @@ int main(int argc, char**argv)
         return 0;
     }
     CODEGEN codegen = CODEGEN(unit);
-    if (compiler_option == COMPILER_OPTION::CODEGEN) {
+    //if (compiler_option == COMPILER_OPTION::CODEGEN) {
         auto module = codegen.get_module();
         std::ofstream codegen_out;
         codegen_out.open(output);
         module->print(llvm::outs(), nullptr); // TODO: 
         codegen_out.close();
         return 0;
-    }
+    //}
 
     codegen.generate_obj(output);
     

@@ -1,0 +1,9 @@
+# Reference: https://build-cpp.github.io/cmkr/cmake-toml
+[project]
+name = "CSC"
+
+[target.CSC]
+type = "executable"
+sources = ["src/**.cpp", "src/getopt.c"]
+headers = ["src/**.hpp", "src/getopt.h"]
+include-directories = ["src", "src/codegen", "src/irbuilder", "src/lexer", "src/parser"]

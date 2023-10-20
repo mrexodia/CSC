@@ -28,6 +28,7 @@ std::vector<llvm::Type*> CODEGEN::generate_func_args(std::vector<ARG_AST*> args_
             llvm_args_list.push_back(llvm::Type::getInt32Ty(ctx));
             break;
         default:
+            __debugbreak();
             // TODO: throw exception.
             break;
         }
@@ -43,6 +44,7 @@ llvm::AllocaInst*CODEGEN::create_entry_block_alloca(llvm::Function *llvm_func, A
     case DOMAIN_TAG::INT:
         return TmpB.CreateAlloca(llvm::Type::getInt32Ty(ctx), nullptr, name);
     default:
+        __debugbreak();
         // TODO: throw exception.
         break;
     }
@@ -58,6 +60,7 @@ llvm::Function*CODEGEN::visit(FUNC_AST*func)
         llvm_ret_datatype = llvm::Type::getInt32Ty(ctx);
         break;
     default:
+        __debugbreak();
         // TODO: throw exception.
         break;
     }
@@ -75,20 +78,20 @@ llvm::Function*CODEGEN::visit(FUNC_AST*func)
         std::size_t i = 0;
         for (auto &arg: llvm_func->args()) {
             std::string name = func->get_args_list()->get_args_list()[i]->get_ident()->get_ident();
-            arg.setName(name);
+            arg->setName(name);
             llvm::AllocaInst*alloca = create_entry_block_alloca(llvm_func, func->get_args_list()->get_args_list()[i]);
-            builder.CreateStore(&arg, alloca);
+            builder.CreateStore(arg, alloca);
             curr_variables[name] = alloca;
             i++;
         }
         visit(func->get_body());
     }
     // To avoid llvm failure when there is no primary return statement at the end of function.
-    llvm::BasicBlock*last = &(curr_func->getBasicBlockList().back());
+    llvm::BasicBlock*last = (curr_func->getBasicBlockList().back());
     builder.SetInsertPoint(last);
     builder.CreateRet(llvm::ConstantInt::get(llvm::IntegerType::getInt32Ty(ctx), 0, true));
 
-    llvm::verifyFunction(*llvm_func);
+    //llvm::verifyFunction(*llvm_func);
 
     return llvm_func;
 }
@@ -99,6 +102,8 @@ llvm::Value*CODEGEN::visit(IDENT_AST*ident)
     if (llvm_ident != nullptr) {
         return builder.CreateLoad(llvm_ident, ident->get_ident().c_str());
     } else {
+        // No such variable
+        __debugbreak();
         // TODO: throw exception.
     }
 }
@@ -111,6 +116,7 @@ llvm::Value*CODEGEN::visit(INTEGER_AST*integer)
 void CODEGEN::visit(COMPOUND_STMT_AST*comp_stmt)
 {
     if (curr_func == nullptr) {
+        __debugbreak();
         // TODO: throw exception.
     }
 
@@ -158,6 +164,7 @@ void CODEGEN::visit(STMT_AST*stmt)
     } else if ((if_stmt = dynamic_cast<IF_STMT_AST*>(stmt->get_stmt())) != nullptr) {
         visit(if_stmt);
     } else {
+        __debugbreak();
         // TODO: throw exception.
     }
 }
@@ -182,6 +189,7 @@ void CODEGEN::visit(ASS_STMT_AST*ass)
         builder.CreateStore(builder.CreateSRem(v, visit(ass->get_expr()), "modtmp"), v);
         break;
     default:
+        __debugbreak();
         // TODO: throw exception.
         break;
     }
@@ -321,6 +329,7 @@ llvm::Value*CODEGEN::visit(REL_EXPR_AST*expr)
             first = builder.CreateAnd(first, llvm::ConstantInt::get(ctx, llvm::APInt(32, 1, true)), "logandtmp");
             break;
         default:
+            __debugbreak();
             // TODO: throw exception.
             break;
         }
@@ -341,6 +350,7 @@ llvm::Value*CODEGEN::visit(ADD_EXPR_AST*expr)
             first = builder.CreateSub(first, visit(mult_exprs[i].first), "subtmp");
             break;
         default:
+            __debugbreak();
             // TODO: throw exception.
             break;
         }
@@ -364,6 +374,7 @@ llvm::Value*CODEGEN::visit(MULT_EXPR_AST*expr)
             first = builder.CreateSRem(first, visit(left_unary_exprs[i].first), "modtmp");
             break;
         default:
+            __debugbreak();
             // TODO: throw exception.
             break;
         }
@@ -383,6 +394,7 @@ llvm::Value*CODEGEN::visit(LEFT_UNARY_EXPR_AST*expr)
         case DOMAIN_TAG::LOGICAL_NOT:
             return builder.CreateICmpEQ(first, llvm::ConstantInt::get(ctx, llvm::APInt(32, 0, true)), "lognottmp");
         default:
+            __debugbreak();
             // TODO: throw exception;
             break;
         }
@@ -403,6 +415,7 @@ llvm::Value*CODEGEN::visit(PRIMARY_EXPR_AST*primary_expr)
     } else if ((expr = dynamic_cast<LOGICAL_OR_EXPR_AST*>(primary_expr->get_primary_expr())) != nullptr) {
         return visit(expr);
     } else {
+        __debugbreak();
         // TODO: throw exception.
     }
 
@@ -416,6 +429,7 @@ llvm::Module*CODEGEN::get_module()
 
 void CODEGEN::generate_obj(std::string objname)
 {
+#if 0
     auto target_triple = llvm::sys::getDefaultTargetTriple();
     llvm::InitializeAllTargetInfos();
     llvm::InitializeAllTargets();
@@ -454,6 +468,7 @@ void CODEGEN::generate_obj(std::string objname)
 
     pass.run(*module);
     dest.flush();
+#endif
 }
 
 CODEGEN::~CODEGEN()
